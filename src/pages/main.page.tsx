@@ -14,18 +14,7 @@ const MainPage = () => {
 	const user = UserStore.user;
 	const guilds = GuildsStore.guilds;
 	const [activeGuild, setActiveGuild] = useState<string>("");
-	const [reports, setReports] = useState<IReport[]>([]);
 
-	useEffect(() => {
-		const fetchReports = async () =>{
-			if(activeGuild !== ""){
-				const reports = await reportsService.fetchReports(activeGuild);
-				setReports(reports);
-			}
-		}
-
-		fetchReports();
-	}, [activeGuild])
 	return (
 		<StyledPage>
 			<Header/>
@@ -38,7 +27,7 @@ const MainPage = () => {
 			{
 				activeGuild === "" ? <p>Выберите сервер, репорты которого хотите посмотреть</p>
 				:
-				<GuildReportsField guild={activeGuild} reports={reports}/>
+				<GuildReportsField guild={activeGuild}/>
 			}
 		</StyledPage>
 	);

@@ -1,23 +1,50 @@
-import {Paper, Table, TableBody, TableContainer, TableHead, TableRow} from '@mui/material';
-import React, {useRef} from 'react';
-import {IGuild} from "../interfaces/IGuild";
+import {Pagination, Paper, Table, TableBody, TableContainer, TableHead, TableRow} from '@mui/material';
+import React, {useEffect, useState} from 'react';
 import {IReport} from "../interfaces/IReport";
 import {TableCell} from "@mui/material";
 import ReportUserProfile from "./report.user.profile";
 import moment from "moment";
-import Popup from "./popup/popup";
+import ReportStatus from "./report.status";
+import ReportInfoPopup from "./report.info.popup";
+import Loader from "./loader";
+import reportsService from "../api/services/reports.service";
 
 export interface IGuildReportsProps{
 	guild:string;
-	reports:IReport[];
 }
 
-const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, reports}) => {
-	const opened = useRef<boolean>(false);
+const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, }) => {
+	const [opened, setOpened] = useState<boolean>(false);
+	const [loading, setLoading] = useState<boolean>(true);
+	const [reports, setReports] = useState<IReport[]>([]);
+	const [activeReport, setActiveReport] = useState<IReport | null>(null);
+	const [page, setPage] = useState<number>(1);
+	const [pagesCount, setPagesCount] = useState<number>(1)
+	const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
+		setPage(value);
+	};
 
+	useEffect(() => {
+		const fetchReports = async () =>{
+			console.log(page);
+			if(guild !== ""){
+				const reportsResult = await reportsService.fetchReports(guild, page);
+				console.log(reportsResult)
+				setReports(reportsResult.reports);
+				setPagesCount(reportsResult.pagesCount);
+			}
+		};
+		setLoading(true);
+		fetchReports().finally(() => {
+			setLoading(false)
+		});
+	}, [guild, page])
+
+
+	if(loading) return <Loader/>
 	return (
 		<TableContainer component={Paper}>
-			<Table sx={{ minWidth: 650 }} aria-label="simple table">
+			<Table sx={{ minWidth: 650 }} aria-label="simple table" style={{color:"#3a3a3a"}}>
 				<TableHead>
 					<TableRow>
 						<TableCell>ID</TableCell>
@@ -33,7 +60,9 @@ const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, reports}) => {
 					{reports.map((report) => (
 						<TableRow
 							key={report.id}
-							sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+							sx={{ '&:last-child td, &:last-child th': { border: 0 }}}
+							onClick={() => {setActiveReport(report); setOpened(true)}}
+							style={{cursor:"pointer"}}
 						>
 							<TableCell component="th" scope="row">
 								{report.id}
@@ -44,17 +73,16 @@ const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, reports}) => {
 							<TableCell align="left">
 								<ReportUserProfile user={report.toUser}/>
 							</TableCell>
-							<TableCell align="left">{report.reason}</TableCell>
+							<TableCell align="left">{report.reason.slice(0, 85)+"..."}</TableCell>
 							<TableCell align="left">{report.moderId || "---"}</TableCell>
 							<TableCell align="left">{moment(report.createdAt).format("D/M/YYYY HH:mm")}</TableCell>
-							<TableCell align="left">{report.status}</TableCell>
+							<TableCell align="left"><ReportStatus status={report.status}/></TableCell>
 						</TableRow>
 					))}
 				</TableBody>
 			</Table>
-			<Popup openedRef={opened}>
-				Pop up
-			</Popup>
+			<Pagination page={page} count={pagesCount} variant="outlined" shape="rounded" onChange={handlePageChange}/>
+			<ReportInfoPopup opened={opened} setOpened={setOpened} report={activeReport}/>
 		</TableContainer>
 	);
 };

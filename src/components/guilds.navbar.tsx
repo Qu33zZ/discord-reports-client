@@ -12,14 +12,13 @@ const GuildsNavbar:React.FC<IGuildsNavbarProps> = ({guilds, activeGuild, setActi
 	console.log(guilds);
 	return (
 		<List style={{width:"20%"}}>
-			{guilds.map(guild => {
-				return (
-					<>
-						<GuildCard guild={guild} activeGuild={activeGuild} setActiveGuild={setActiveGuild}/>
-						<Divider/>
-					</>
-				)
-			})}
+			{guilds.map(guild =>
+				<div key={guild.id}>
+					<GuildCard guild={guild} activeGuild={activeGuild} setActiveGuild={setActiveGuild}/>
+					<Divider/>
+				</div>
+
+			)}
 		</List>
 	);
 };

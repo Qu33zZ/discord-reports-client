@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from "styled-components";
 import {IUser} from "../interfaces/IUser";
-import {types} from "util";
 
 const StyledReportUser = styled.div`
 	display: flex;
@@ -17,7 +16,7 @@ const StyledReportUser = styled.div`
   
   	& p{
 	  font-weight: bold;
-	  color: #3A3A3A;
+	  //color: #3A3A3A;
     }
 `;
 
@@ -37,7 +36,6 @@ interface IReportUserProfileProps{
 };
 
 const ReportUserProfile:React.FC<IReportUserProfileProps> = ({user}) => {
-	console.log(user)
 	if(typeof user === "string"){
 		return (
 			<StyledReportUser>

@@ -18,7 +18,6 @@ const StyledGuildIconNotFound = styled.div`
 const StyledGuildIcon = styled.img`
 	width: ${GuildIconSize}px;
   	height: ${GuildIconSize}px;
-  	
   	border-radius: 50%;
 `;
 const GuildCard = ({guild, activeGuild, setActiveGuild}:{guild:IGuild, activeGuild:string, setActiveGuild:React.Dispatch<React.SetStateAction<string>>}) => {

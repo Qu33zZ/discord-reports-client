@@ -39,21 +39,18 @@ const ScrollLock = createGlobalStyle`
 `;
 
 interface IPopupProps{
-	openedRef:any,
-	// opened:boolean,
-	// setOpened:React.Dispatch<React.SetStateAction<boolean>>;
+	opened:boolean,
+	setOpened:React.Dispatch<React.SetStateAction<boolean>>;
 	children:React.ReactNode | React.ReactNode[];
 }
-const Popup:React.FC<IPopupProps> = ({children, openedRef}) => {
-	const [opened, setOpened] = useState<boolean>(false);
-	openedRef.opened = opened;
+const Popup:React.FC<IPopupProps> = ({children, opened, setOpened}) => {
 	const closePopup = (event:React.MouseEvent<HTMLDivElement, MouseEvent>) =>{
 		event.stopPropagation();
-		openedRef.current = false;
+		setOpened(false);
 	}
 	return (
-		<StyledPopup opened={openedRef.current} onClick={closePopup} ref={openedRef}>
-			{openedRef.current && <ScrollLock/>}
+		<StyledPopup opened={opened} onClick={closePopup}>
+			{opened && <ScrollLock/>}
 			<PopupContent>
 				{children}
 			</PopupContent>
