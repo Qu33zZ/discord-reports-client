@@ -17,7 +17,8 @@ const StyledButton = styled.button`
 type buttonType = "ACCEPT" | "REJECT" | "TAKE";
 
 interface IButtonProps{
-	type:buttonType
+	type:buttonType,
+	clickAction:any
 };
 
 const ButtonTypesSettings:{[key:string]:{color:string, text:string}} = {
@@ -36,9 +37,9 @@ const ButtonTypesSettings:{[key:string]:{color:string, text:string}} = {
 };
 
 
-const Button:React.FC<IButtonProps> = ({type}) => {
+const Button:React.FC<IButtonProps> = ({type, clickAction}) => {
 	return (
-		<StyledButton color={ButtonTypesSettings[type].color}>
+		<StyledButton color={ButtonTypesSettings[type].color} onClick={clickAction}>
 			{ButtonTypesSettings[type].text}
 		</StyledButton>
 	);

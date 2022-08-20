@@ -44,7 +44,7 @@ const Header = () => {
 			<h1><span>D</span>Reports</h1>
 			{user
 				? <img src={`https://cdn.discordapp.com/avatars/${user?.id}/${user?.avatar}.png`} alt=""/>
-				: <a href="https://discord.com/api/oauth2/authorize?client_id=772064351980355636&redirect_uri=http%3A%2F%2Flocalhost%3A3000&response_type=code&scope=identify%20email%20guilds%20guilds.join">
+				: <a href="https://discord.com/api/oauth2/authorize?client_id=1010630896761700474&redirect_uri=http%3A%2F%2Flocalhost%3A3000&response_type=code&scope=identify%20email%20guilds%20guilds.members.read">
 					<Button style={{backgroundColor:"rgba(88,101,242,1)"}} variant="contained">Войти</Button>
 				  </a>
 			}

@@ -8,11 +8,17 @@ import ReportStatus from "./report.status";
 import ReportInfoPopup from "./report.info.popup";
 import Loader from "./loader";
 import reportsService from "../api/services/reports.service";
+import styled from "styled-components";
 
 export interface IGuildReportsProps{
 	guild:string;
 }
 
+const StyledPagination = styled(Pagination)`
+  	display: flex;
+  	width: 100%;
+  	justify-content: space-around;
+`;
 const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, }) => {
 	const [opened, setOpened] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
@@ -73,7 +79,7 @@ const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, }) => {
 							<TableCell align="left">
 								<ReportUserProfile user={report.toUser}/>
 							</TableCell>
-							<TableCell align="left">{report.reason.slice(0, 85)+"..."}</TableCell>
+							<TableCell align="left">{report.reason.length >= 85 ? report.reason.slice(0, 85)+"..." : report.reason}</TableCell>
 							<TableCell align="left">{report.moderId || "---"}</TableCell>
 							<TableCell align="left">{moment(report.createdAt).format("D/M/YYYY HH:mm")}</TableCell>
 							<TableCell align="left"><ReportStatus status={report.status}/></TableCell>
@@ -81,7 +87,7 @@ const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, }) => {
 					))}
 				</TableBody>
 			</Table>
-			<Pagination page={page} count={pagesCount} variant="outlined" shape="rounded" onChange={handlePageChange}/>
+			<StyledPagination page={page} count={pagesCount} variant="outlined" shape="rounded" onChange={handlePageChange}/>
 			<ReportInfoPopup opened={opened} setOpened={setOpened} report={activeReport}/>
 		</TableContainer>
 	);

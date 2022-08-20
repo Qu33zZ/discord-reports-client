@@ -9,7 +9,6 @@ class AuthService{
 	async login(code:string):Promise<IUser | null>{
 		const response = await $api.post(`/auth/login/${code}`);
 		if(response.status === 200){
-			console.log(response.data);
 			UserStore.login(response.data.user as IUser);
 			Cookies.set("accessToken", response.data.access_token);
 			Cookies.set("refreshToken", response.data.refresh_token);

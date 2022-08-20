@@ -1,10 +1,12 @@
 import React from 'react';
 import styled from "styled-components";
 import Popup from "./popup/popup";
-import {IReport} from "../interfaces/IReport";
+import {IReport, reportStatusType} from "../interfaces/IReport";
 import ReportUserProfile from "./report.user.profile";
 import ReportStatus from "./report.status";
 import Button from "./button";
+import reportsService from "../api/services/reports.service";
+import {toast} from "react-toastify";
 
 const StyledReportTitle = styled.div`
   	display: flex;
@@ -116,6 +118,13 @@ const ReportInfoPopup:React.FC<IReportInfoPopupProps> = ({opened, setOpened, rep
 		</Popup>
 	);
 
+	const updateReportStatus = async (status:reportStatusType) => {
+		if(!report) return toast("Репорт не найден", {type:"success", containerId:"main-container"});
+		const updatedReport = await reportsService.updateReportStatus(report.id, status, report.guild);
+		if(updatedReport) report = {...report, ...updatedReport} as IReport;
+	}
+
+
 	return (
 		<Popup setOpened={setOpened} opened={opened}>
 			<StyledReportTitle>Репорт --- #{report.id} <ReportStatus status={report.status}/></StyledReportTitle>
@@ -123,13 +132,13 @@ const ReportInfoPopup:React.FC<IReportInfoPopupProps> = ({opened, setOpened, rep
 				<StyledFromUserField>
 					<StyledFieldTitle>От пользователя:</StyledFieldTitle>
 					<StyledFieldValue>
-						<StyledUserProfile user={report.fromUser}/>
+						<StyledUserProfile user={report.fromUser} notificationsContainerId={"pop-up-container"}/>
 					</StyledFieldValue>
 				</StyledFromUserField>
 				<StyledToUserField>
 					<StyledFieldTitle>На пользователя:</StyledFieldTitle>
 					<StyledFieldValue>
-						<StyledUserProfile user={report.toUser}/>
+						<StyledUserProfile user={report.toUser} notificationsContainerId={"pop-up-container"}/>
 					</StyledFieldValue>
 				</StyledToUserField>
 				<StyledModerField>
@@ -147,11 +156,11 @@ const ReportInfoPopup:React.FC<IReportInfoPopupProps> = ({opened, setOpened, rep
 			</ReportInfoContainer>
 			<ButtonsLayout>
 				{
-					report.status === "CREATED" && <Button type={"TAKE"}/>
+					report.status === "CREATED" && <Button type={"TAKE"} clickAction={() => updateReportStatus("PENDING")}/>
 				}
 
 				{
-					report.status === "PENDING" && [<Button type={"ACCEPT"}/>,  <Button type={"REJECT"}/>]
+					report.status === "PENDING" && [<Button type={"ACCEPT"} clickAction={() => updateReportStatus("ACCEPTED")}/>,  <Button type={"REJECT"} clickAction={() => updateReportStatus("REJECTED")}/>]
 				}
 			</ButtonsLayout>
 		</Popup>

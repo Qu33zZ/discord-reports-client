@@ -7,6 +7,11 @@ import "./NullingStyles.css";
 import Cookies from "js-cookie";
 import usersService from "./api/services/users.service";
 import GuildsStore from "./store/guilds.store";
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
+import UserStore from "./store/user.store";
+
+
 const App = () => {
 	const [loading, setLoading] = useState<boolean>(true);
 	useEffect(() =>{
@@ -20,12 +25,15 @@ const App = () => {
 					if(Cookies.get("accessToken")) await authService.loginByAccessToken();
 				}
 			}else{
-				await authService.loginByAccessToken();
+				if(Cookies.get("accessToken")) await authService.loginByAccessToken();
 			}
 		};
 		const fetchUserGuilds = async () =>{
-			const guilds = await usersService.fetchGuilds();
-			GuildsStore.setGuilds(guilds);
+			if(UserStore.user){
+				const guilds = await usersService.fetchGuilds();
+				GuildsStore.setGuilds(guilds);
+			}
+
 		}
 		login()
 			.then(() => fetchUserGuilds())
@@ -40,6 +48,7 @@ const App = () => {
 				<Routes>
 					<Route element={<MainPage/>} path={"/"}/>
 				</Routes>
+				<ToastContainer position={"bottom-center"} limit={1} newestOnTop containerId={"main-container"} enableMultiContainer/>
 			 </BrowserRouter>
 	);
 };

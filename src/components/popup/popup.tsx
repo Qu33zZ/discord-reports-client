@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import styled, {createGlobalStyle} from "styled-components";
 import PopupContent from "./popup.content";
+import {Container} from "@mui/material";
+import {ToastContainer} from "react-toastify";
 
 
 const StyledPopup = styled.div`
@@ -54,6 +56,7 @@ const Popup:React.FC<IPopupProps> = ({children, opened, setOpened}) => {
 			<PopupContent>
 				{children}
 			</PopupContent>
+			<ToastContainer enableMultiContainer containerId={"pop-up-container"} newestOnTop limit={1}/>
 		</StyledPopup>
 	);
 };
