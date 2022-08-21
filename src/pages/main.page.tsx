@@ -14,21 +14,23 @@ const MainPage = () => {
 	const user = UserStore.user;
 	const guilds = GuildsStore.guilds;
 	const [activeGuild, setActiveGuild] = useState<string>("");
-
+	const [guildsNavbarOpen, setGuildsNavbarOpen] = useState<boolean>(false);
 	return (
 		<StyledPage>
-			<Header/>
-			{
-				!user
-					? <MainPageAuthMessage/>
+			<Header setNavbarOpen={setGuildsNavbarOpen} navbarOpen={guildsNavbarOpen}/>
+			<div style={{display:"flex"}}>
+				{
+					!user
+						? <MainPageAuthMessage/>
+						:
+					<GuildsNavbar guilds={guilds} activeGuild={activeGuild} setActiveGuild={setActiveGuild} opened={guildsNavbarOpen}/>
+				}
+				{
+					activeGuild === "" ? <p>Выберите сервер, репорты которого хотите посмотреть</p>
 					:
-				<GuildsNavbar guilds={guilds} activeGuild={activeGuild} setActiveGuild={setActiveGuild}/>
-			}
-			{
-				activeGuild === "" ? <p>Выберите сервер, репорты которого хотите посмотреть</p>
-				:
-				<GuildReportsField guild={activeGuild}/>
-			}
+					<GuildReportsField guild={activeGuild}/>
+				}
+			</div>
 		</StyledPage>
 	);
 };

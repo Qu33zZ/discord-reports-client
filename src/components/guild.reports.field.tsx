@@ -9,6 +9,10 @@ import ReportInfoPopup from "./report.info.popup";
 import Loader from "./loader";
 import reportsService from "../api/services/reports.service";
 import styled from "styled-components";
+import {io} from "socket.io-client";
+import newReportNotificationSound from "../assets/sounds/newReportNotification.mp3";
+import {noop} from "mobx/dist/utils/utils";
+const socket = io("http://localhost:3001");
 
 export interface IGuildReportsProps{
 	guild:string;
@@ -19,20 +23,22 @@ const StyledPagination = styled(Pagination)`
   	width: 100%;
   	justify-content: space-around;
 `;
+
 const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, }) => {
 	const [opened, setOpened] = useState<boolean>(false);
 	const [loading, setLoading] = useState<boolean>(true);
 	const [reports, setReports] = useState<IReport[]>([]);
 	const [activeReport, setActiveReport] = useState<IReport | null>(null);
 	const [page, setPage] = useState<number>(1);
-	const [pagesCount, setPagesCount] = useState<number>(1)
+	const [pagesCount, setPagesCount] = useState<number>(1);
+	const notificationSound = new Audio(newReportNotificationSound);
+
 	const handlePageChange = (event: React.ChangeEvent<unknown>, value: number) => {
 		setPage(value);
 	};
 
 	useEffect(() => {
 		const fetchReports = async () =>{
-			console.log(page);
 			if(guild !== ""){
 				const reportsResult = await reportsService.fetchReports(guild, page);
 				console.log(reportsResult)
@@ -47,10 +53,19 @@ const GuildReportsField:React.FC<IGuildReportsProps> = ({guild, }) => {
 	}, [guild, page])
 
 
+	//receive new report using socket.io
+	useEffect(() => {
+		socket.on("report", (data) => {
+			setReports(prevState => [data, ...prevState])
+			notificationSound.play();
+		});
+	}, []);
+
+
 	if(loading) return <Loader/>
 	return (
 		<TableContainer component={Paper}>
-			<Table sx={{ minWidth: 650 }} aria-label="simple table" style={{color:"#3a3a3a"}}>
+			<Table sx={{ minWidth: 650}} aria-label="simple table" >
 				<TableHead>
 					<TableRow>
 						<TableCell>ID</TableCell>
